@@ -48,12 +48,8 @@ occ_dt <- occ_dt[name%in%enough_occ$name,]
 
 occ_dt_sf <- st_as_sf(occ_dt,coords=c("longitude","latitude"),crs=st_crs(4326))
 
-
 table_species_name_count <- merge(table_species_name,final_count,
                                   by.x = "ITEX_name",by.y ="name",all.x = T)
-hist(final_count$N,nc = 20)
-View(final_count)
-
 
 bugged_sp <- table_species_name_count[is.na(N) & n_occ!= 0,ITEX_name]
 
@@ -70,23 +66,26 @@ col_to_compute <- col_to_compute[c(1,12:19,2:11,20:30,32:34)]  ### ordering, not
 
 round_digit <- c(2,1,3,1,2,2,1,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,0,0,1,2,0,3,3)
 
+## mean computation and rounding to the nearest CHELSA decimal pre
 occ_dt_clim[ , metric := "mean" ]
 mean_clim_dt <- occ_dt_clim[ , lapply(.SD,mean,na.rm=T), by = .(name,metric),.SDcols = col_to_compute]
 mean_clim_dt <- mean_clim_dt[ , mapply(round,.SD,round_digit,SIMPLIFY = F), by = .(name,metric),.SDcols = col_to_compute] ##rounding to the decimal precision of CHELSA
 
+## median computation
 occ_dt_clim[ , metric := "median" ]
 med_clim_dt <- occ_dt_clim[ , lapply(.SD,median,na.rm=T), by = .(name,metric),.SDcols = col_to_compute]
 
+## Quantile 5 and 95 computation
 occ_dt_clim[ , metric := "Q" ]
 Q_clim_dt <- occ_dt_clim[ , lapply(.SD,quantile,probs=c(0.05,0.95),na.rm=T), by = .(name,metric),.SDcols = col_to_compute]
 Q_clim_dt[,metric := rep(c("Q05","Q95"),times= nrow(Q_clim_dt)/2)]
 
+## interquantile range computation
 Q_clim_dt_tmp <- Q_clim_dt
 Q_clim_dt_tmp$metric <- "range"
-
-
 range_clim_dt <- Q_clim_dt_tmp[,lapply(.SD,diff),by = .(name,metric),.SDcols = col_to_compute];rm(Q_clim_dt_tmp)
 
+## optimum of the density computation and rounding
 get_density_max <- function(x,na.rm=T){
   tmp <- try(density(x,na.rm=na.rm,n = 512*2),silent = T)
   
@@ -97,7 +96,7 @@ occ_dt_clim[ , metric := "optimum" ]
 opt_clim_dt <- occ_dt_clim[ , lapply(.SD,get_density_max,na.rm=T), by = .(name,metric),.SDcols = col_to_compute]
 opt_clim_dt <- opt_clim_dt[ , mapply(round,.SD,round_digit,SIMPLIFY = F), by = .(name,metric),.SDcols = col_to_compute] ##rounding to the decimal precision of CHELSA
 
-
+## getting the database together
 ClimNicheHub <- rbind(mean_clim_dt,med_clim_dt,Q_clim_dt,range_clim_dt,opt_clim_dt)
 ClimNicheHub <- ClimNicheHub[order(name),]
 
@@ -108,9 +107,6 @@ ClimNicheHub[,print(summary(.SD)),by = metric]
 write.table(ClimNicheHub,file.path("ClimNiche_database","climate_summary.csv"),row.names = F,sep = ",")
 write.table(table_species_name_count,file.path("ClimNiche_database","sampling_summary.csv"),row.names = F,sep = ",")
 
-table_species_name_count
-
-
 #### PCA-based approach ####
 
 grid_clim <- occ_dt_clim[!duplicated(cell_id),-c("name","prov","date","key","metric")]
@@ -120,8 +116,8 @@ sample_of_grid <- sample(grid_clim$cell_id,20000)
 
 plot(grid_clim[sample_of_grid,.(bio1,bio4)])
 
+#### Export of the whole chelsa sampling 
 saveRDS(grid_clim,file.path("Complete_sampling","all_CHELSA_cells.RData"))
-
 saveRDS(occ_dt_clim[,c("name","cell_id")],file.path("Complete_sampling","species_cells.RData"))
 
 occ_dt_clim[,c("name","cell_id")][,.N,by = name]
@@ -161,35 +157,6 @@ ggplot(pca_species,aes(x = Axis3, y = Axis4, color = bio10,size = bio4))+
 plot(test_salix$lisup)
 
 write.table(pca_ClimNicheHub,file.path("ClimNiche_database","pca_summary.csv"),row.names = F,sep = ",")
-
-#### misc ####
-bootstrap <- foreach()
-
-one_boot <- occ_dt_clim[name == "Achillea millefolium",][sample(1:6904,1000),][ , lapply(.SD,median,na.rm=T), by = name,.SDcols = names(chelsa_full)]
-
-one_boot <- occ_dt_clim[name == "Anthyllis vulneraria",][sample(1:6569,6569,F),]
-
-ggplot(one_boot,aes(x = bio10))+
-  theme_bw()+
-  geom_histogram(fill="orange",alpha=0.25,color="grey80",mapping = aes(y = after_stat(density)))+
-  geom_density(fill="orange",alpha = 0.5)
-
-hist(one_boot$bio1)
-
-occ_dt_2[,lapply(.SD, mean_all),by = name ]
-
-(cols) := lapply(.SD, "*", -1)
-
-density(occ_dt_clim[name == "Salix arctica",bio10],n = 512*2)$x
-
-get_density_max(occ_dt_clim[name == "Salix arctica",bio10])
-
-
-ggplot(ClimNicheHub[metric == "median",],aes(x = bio10,y = bio12))+
-  theme_bw()+
-  labs(x = " TWQ °C",y= 'PP mm')+
-  geom_point()+
-  geom_smooth(method = "lm")
 
 #### Plotting ####
 country_shape <- ne_download(50)
@@ -258,10 +225,3 @@ save_a_plot("Betula nana","bio10","TWQ (°C)")
 save_a_plot("Androsace obtusifolia","bio10","TWQ (°C)")
 save_a_plot("Androsace chamaejasme","bio10","TWQ (°C)")
 
-Androsace obtusifolia
-Androsace chamaejasme
-
-Epilobium palustre
-
-Achillea atrata
-spocc("")
