@@ -18,18 +18,17 @@ library(ggpubr)
 table_species_name <- fread(file.path("species_list","Taxonomy_ITEX_gbif_ClimNicheHub_2025.csv"))
 
 all_chelsa_path <- list.files("chelsa_data_V2.1",full.names = T,pattern = ".tif")
-
+all_chelsa_path <- all_chelsa_path[c(1:19,21:33,20)] ## put cell_id raster at the end
 chelsa_full <- rast(all_chelsa_path)
 
 names(chelsa_full) <- str_remove(names(chelsa_full),"_1981_2010_V.2.1")
 names(chelsa_full) <- str_remove(names(chelsa_full),"CHELSA_")
 
-cell_id <- chelsa_full$bio1
-names(cell_id) <- "cell_id"
-values(cell_id) <- 1:ncell(cell_id)
-
-chelsa_full <- c(chelsa_full,cell_id)
-
+# run once after downloading Chelsa data 
+# cell_id <- chelsa_full$bio1
+# names(cell_id) <- "cell_id"
+# values(cell_id) <- 1:ncell(cell_id)
+# writeRaster(cell_id,file.path("chelsa_data_V2.1","CHELSA_cell_id_1981_2010_V.2.1.tif"))
 #### loading occurrences ####
 
 result_occ_path <-  list.files("filtered_occ",full.names = T,pattern = ".RData")
@@ -59,10 +58,23 @@ all_clim <- extract(chelsa_full,vect(occ_dt_sf))
 all_clim <- data.table(all_clim)
 occ_dt_clim <- cbind(occ_dt,all_clim[,-"ID"])
 
+rm(occ_dt);rm(occ_dt_sf);gc()
+
 #### summary statistics computation ####
+
+final_count <- occ_dt[,.N,by= name]
+final_count_boreal_tundra <- occ_dt_clim[kg5<=7,.N,by= name]
+
+final_count <- merge(final_count,final_count_boreal_tundra,all.x=T,by="name",suffixes = c("_all","_bor_tund"))
+final_count[,N_bor_tund := ifelse(is.na(N_bor_tund),0,N_bor_tund)]
+sum(final_count$N_bor_tund<= 100,na.rm = T)
 
 col_to_compute <- c(names(chelsa_full)[-33],"longitude","latitude")
 col_to_compute <- col_to_compute[c(1,12:19,2:11,20:30,32:34)]  ### ordering, not interested in kg5
+
+occ_dt_clim_full <- occ_dt_clim
+occ_dt_clim <- occ_dt_clim[kg5<=7,]
+occ_dt_clim <- occ_dt_clim[name %in% final_count[N_bor_tund>=100,name],]
 
 round_digit <- c(2,1,3,1,2,2,1,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,0,0,1,2,0,3,3)
 
@@ -107,18 +119,22 @@ ClimNicheHub[,print(summary(.SD)),by = metric]
 write.table(ClimNicheHub,file.path("ClimNiche_database","climate_summary.csv"),row.names = F,sep = ",")
 write.table(table_species_name_count,file.path("ClimNiche_database","sampling_summary.csv"),row.names = F,sep = ",")
 
+write.table(ClimNicheHub,file.path("ClimNiche_database","boreal_tundra_climate_summary.csv"),row.names = F,sep = ",")
+
 #### PCA-based approach ####
 
 grid_clim <- occ_dt_clim[!duplicated(cell_id),-c("name","prov","date","key","metric")]
-grid_clim <- grid_clim[complete.cases(grid_clim),]
 set.seed(0)
 sample_of_grid <- sample(grid_clim$cell_id,20000)
 
-plot(grid_clim[sample_of_grid,.(bio1,bio4)])
+plot(grid_clim[cell_id%in% sample_of_grid,.(bio1,bio4)])
 
 #### Export of the whole chelsa sampling 
 saveRDS(grid_clim,file.path("Complete_sampling","all_CHELSA_cells.RData"))
 saveRDS(occ_dt_clim[,c("name","cell_id")],file.path("Complete_sampling","species_cells.RData"))
+
+saveRDS(grid_clim,file.path("Complete_sampling","boreal_tundra_CHELSA_cells.RData"))
+saveRDS(occ_dt_clim[,c("name","cell_id")],file.path("Complete_sampling","boreal_tundra_species_cells.RData"))
 
 occ_dt_clim[,c("name","cell_id")][,.N,by = name]
 
@@ -225,3 +241,6 @@ save_a_plot("Betula nana","bio10","TWQ (°C)")
 save_a_plot("Androsace obtusifolia","bio10","TWQ (°C)")
 save_a_plot("Androsace chamaejasme","bio10","TWQ (°C)")
 
+plot_one_sp("Achillea millefolium","bio10","TWQ (°C)")
+plot_one_sp("Salix arctica","bio10","TWQ (°C)")
+plot_one_sp("Betula pubescens","bio10","TWQ (°C)")
