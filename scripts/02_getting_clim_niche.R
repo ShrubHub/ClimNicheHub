@@ -62,12 +62,18 @@ rm(occ_dt);rm(occ_dt_sf);gc()
 
 #### summary statistics computation ####
 
-final_count <- occ_dt[,.N,by= name]
+final_count <- occ_dt_clim[,.N,by= name]
 final_count_boreal_tundra <- occ_dt_clim[kg5<=7,.N,by= name]
+final_count_tundra <- occ_dt_clim[kg5<=4,.(`N_tund` =.N),by= name]
 
 final_count <- merge(final_count,final_count_boreal_tundra,all.x=T,by="name",suffixes = c("_all","_bor_tund"))
+final_count <- merge(final_count,final_count_tundra,all.x=T,by="name")
 final_count[,N_bor_tund := ifelse(is.na(N_bor_tund),0,N_bor_tund)]
+final_count[,N_tund := ifelse(is.na(N_tund),0,N_tund)]
+
 sum(final_count$N_bor_tund<= 100,na.rm = T)
+sum(final_count$N_tund<= 100,na.rm = T)
+final_count[N_tund<= 100,]
 
 col_to_compute <- c(names(chelsa_full)[-33],"longitude","latitude")
 col_to_compute <- col_to_compute[c(1,12:19,2:11,20:30,32:34)]  ### ordering, not interested in kg5
@@ -136,16 +142,16 @@ saveRDS(occ_dt_clim[,c("name","cell_id")],file.path("Complete_sampling","species
 saveRDS(grid_clim,file.path("Complete_sampling","boreal_tundra_CHELSA_cells.RData"))
 saveRDS(occ_dt_clim[,c("name","cell_id")],file.path("Complete_sampling","boreal_tundra_species_cells.RData"))
 
-occ_dt_clim[,c("name","cell_id")][,.N,by = name]
-
 library(ade4)
+
+apply(grid_clim,2,function(x)sum(is.na(x)))
 
 to_pca <- grid_clim[cell_id%in%sample_of_grid,-c("longitude" , "latitude","kg5")]
 rownames(to_pca) <- to_pca$cell_id
 to_pca[,cell_id:=NULL]
 
-to_pca <- to_pca[,-c("gddlgd0","gdgfgd0","fgd","gsp")]
-
+to_pca <- to_pca[,-c("gddlgd0","gdgfgd0","fgd","gsp","gsl")]
+to_pca <- to_pca[complete.cases(to_pca),]
 pca_clim_grid <- dudi.pca(to_pca,nf = 4, scannf = F)
 inertia.dudi(pca_clim_grid)
 s.arrow(pca_clim_grid$co)
@@ -172,16 +178,19 @@ ggplot(pca_species,aes(x = Axis3, y = Axis4, color = bio10,size = bio4))+
 
 plot(test_salix$lisup)
 
-write.table(pca_ClimNicheHub,file.path("ClimNiche_database","pca_summary.csv"),row.names = F,sep = ",")
+write.table(pca_ClimNicheHub,file.path("ClimNiche_database","boreal_tundra_pca_summary.csv"),row.names = F,sep = ",")
 
 #### Plotting ####
 country_shape <- ne_download(50)
 
-plot_one_sp <- function(name_sp, what = "bio10",labs = NULL){
+occ_dt_clim <- occ_dt_clim[kg5<=4,]
+occ_dt_clim <- occ_dt_clim_full
+
+plot_one_sp <- function(name_sp, what = "bio10",labs = NULL,occ = occ_dt_clim){
   set.seed(0)
   if(is.null(labs))labs <- what
   
-  occ_dt_clim_one_sp <- occ_dt_clim[name ==  name_sp,]
+  occ_dt_clim_one_sp <- occ[name ==  name_sp,]
   occ_dt_clim_one_sp_subset <- occ_dt_clim_one_sp
   if(nrow(occ_dt_clim_one_sp)>1000) occ_dt_clim_one_sp_subset <- occ_dt_clim_one_sp[sample(1:nrow(occ_dt_clim_one_sp),1000,F),]
   
@@ -241,6 +250,18 @@ save_a_plot("Betula nana","bio10","TWQ (°C)")
 save_a_plot("Androsace obtusifolia","bio10","TWQ (°C)")
 save_a_plot("Androsace chamaejasme","bio10","TWQ (°C)")
 
-plot_one_sp("Achillea millefolium","bio10","TWQ (°C)")
+plot_one_sp("Achillea millefolium","bio10","TWQ (°C)",occ_dt_clim_full)
+
 plot_one_sp("Salix arctica","bio10","TWQ (°C)")
-plot_one_sp("Betula pubescens","bio10","TWQ (°C)")
+plot_one_sp("Betula pubescens","bio10","TWQ (°C)",occ_dt_clim)
+plot_one_sp("Betula pubescens","bio10","TWQ (°C)",occ_dt_clim[kg5<=7])
+plot_one_sp("Betula pubescens","bio10","TWQ (°C)",occ_dt_clim[kg5<=4])
+
+plot_one_sp("Andromeda polifolia","bio10","TWQ (°C)",occ_dt_clim)
+plot_one_sp("Andromeda polifolia","bio10","TWQ (°C)",occ_dt_clim[kg5<=7])
+plot_one_sp("Andromeda polifolia","bio10","TWQ (°C)",occ_dt_clim[kg5<=4])
+Salix petrophila
+
+
+plot_one_sp("Silene acaulis","bio18","TWQ (°C)",occ_dt_clim)
+
