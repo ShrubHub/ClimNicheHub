@@ -26,7 +26,7 @@ These script can be used to extend the analysis to non-vascular taxa.
 
 ### Acknowledgment 
 
-We are grateful to the creators and the maintainere of the packages `spocc`, `occTest`, `terra`, `sf` and `data.table` that greatly facilitated our analysis, as well to the many data contributors to the GBIF and its sub-repositories (such as INaturalist).
+We are grateful to the creators and the maintainere of the packages `spocc`, `occTest`, `terra`, `sf` and `data.table` that greatly facilitated our analysis, as well to the many data contributors to the GBIF and its sub-repositories (such as INaturalist). JB and IMS were funded by the ERC synergy grand n°101071417.
 
 ### Authors
 
