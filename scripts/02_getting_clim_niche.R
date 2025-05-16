@@ -15,8 +15,12 @@ library(ggpubr)
 
 #### meta data and climate data ####
 
-table_species_name <- fread(file.path("species_list","Taxonomy_ITEX_gbif_ClimNicheHub_2025.csv"))
+table_species_name <- fread(file.path("species_list","GBIF_ITEX_query_list_05_2025.csv"))
 
+table_species_name[,raw_occ_path := get_raw_file_path(accepted_name)]
+table_species_name[,filtered_occ_path := get_raw_file_path(accepted_name)]
+
+## clim data
 all_chelsa_path <- list.files("chelsa_data_V2.1",full.names = T,pattern = ".tif")
 all_chelsa_path <- all_chelsa_path[c(1:19,21:33,20)] ## put cell_id raster at the end
 chelsa_full <- rast(all_chelsa_path)
@@ -35,22 +39,28 @@ result_occ_path <-  list.files("filtered_occ",full.names = T,pattern = ".RData")
 
 list_of_occ <- lapply(result_occ_path,readRDS)
 
-occ_dt <- rbindlist(list_of_occ);rm(list_of_occ);gc()
+occ_dt <- rbindlist(list_of_occ,fill = T);rm(list_of_occ);gc()
 
-occ_dt <- occ_dt[,c(1:6)]
+occ_dt <- occ_dt[,c(1:6,147)]
+
+occ_dt[,accepted_name := ifelse(is.na(name_itex),name,name_itex)]
+
+## some names aren't stored in the same column because of some early version of the dowload script
+occ_dt[,name := accepted_name ]
+occ_dt[,name_itex := NULL ]
+occ_dt[,accepted_name := NULL ]
 
 final_count <- occ_dt[,.N,by= name]
 
-enough_occ <- final_count[N>100 ,]
-
+enough_occ <- final_count[N>= 100,]
+## selecting species with at least 100 occ
 occ_dt <- occ_dt[name%in%enough_occ$name,]
-
+## spatial object
 occ_dt_sf <- st_as_sf(occ_dt,coords=c("longitude","latitude"),crs=st_crs(4326))
 
-table_species_name_count <- merge(table_species_name,final_count,
-                                  by.x = "ITEX_name",by.y ="name",all.x = T)
-
-bugged_sp <- table_species_name_count[is.na(N) & n_occ!= 0,ITEX_name]
+bugged_sp <- table_species_name_count[is.na(N) ,accepted_name]
+bugged_sp
+##no occurrences found for "Lophozia serpens" 
 
 #### extraction of climate data ####
 
@@ -62,26 +72,36 @@ rm(occ_dt);rm(occ_dt_sf);gc()
 
 #### summary statistics computation ####
 
-final_count <- occ_dt_clim[,.N,by= name]
+final_count_all <- occ_dt_clim[,.N,by= name]
 final_count_boreal_tundra <- occ_dt_clim[kg5<=7,.N,by= name]
 final_count_tundra <- occ_dt_clim[kg5<=4,.(`N_tund` =.N),by= name]
 
-final_count <- merge(final_count,final_count_boreal_tundra,all.x=T,by="name",suffixes = c("_all","_bor_tund"))
-final_count <- merge(final_count,final_count_tundra,all.x=T,by="name")
-final_count[,N_bor_tund := ifelse(is.na(N_bor_tund),0,N_bor_tund)]
-final_count[,N_tund := ifelse(is.na(N_tund),0,N_tund)]
+final_count_all <- merge(final_count_all,final_count_boreal_tundra,all.x=T,by="name",suffixes = c("_all","_bor_tund"))
+final_count_all <- merge(final_count_all,final_count_tundra,all.x=T,by="name")
+# final_count_all[,N_bor_tund := ifelse(is.na(N_bor_tund),0,N_bor_tund)]
+# final_count_all[,N_tund := ifelse(is.na(N_tund),0,N_tund)]
 
-sum(final_count$N_bor_tund<= 100,na.rm = T)
-sum(final_count$N_tund<= 100,na.rm = T)
-final_count[N_tund<= 100,]
+sampling_summary <- merge(final_count,final_count_all[,-"N_all"],all.x =T)
+colnames(sampling_summary)[2] <- "N_all"
+sampling_summary[,included_in_all := as.numeric(N_all>=100)]
+sampling_summary[,included_in_bor_tund := as.numeric(N_bor_tund>=100)]
+sampling_summary[,included_in_bor_tund := ifelse(is.na(included_in_bor_tund),0,included_in_bor_tund)]
+
+write.table(sampling_summary,file.path("ClimNiche_database","sampling_summary.csv"),row.names = F,sep = ",")
+
+#### ClimNiche computation####
 
 col_to_compute <- c(names(chelsa_full)[-33],"longitude","latitude")
 col_to_compute <- col_to_compute[c(1,12:19,2:11,20:30,32:34)]  ### ordering, not interested in kg5
 
+## run this for the complete computation
 occ_dt_clim_full <- occ_dt_clim
-occ_dt_clim <- occ_dt_clim[kg5<=7,]
-occ_dt_clim <- occ_dt_clim[name %in% final_count[N_bor_tund>=100,name],]
+occ_dt_clim <- occ_dt_clim_full
 
+## run this for the bor_tund computation
+occ_dt_clim <- occ_dt_clim[kg5<=7,]
+occ_dt_clim <- occ_dt_clim[name %in% final_count_all[N_bor_tund>=100,name],]
+## precision of CHELSA
 round_digit <- c(2,1,3,1,2,2,1,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,0,0,1,2,0,3,3)
 
 ## mean computation and rounding to the nearest CHELSA decimal pre
@@ -103,7 +123,7 @@ Q_clim_dt_tmp <- Q_clim_dt
 Q_clim_dt_tmp$metric <- "range"
 range_clim_dt <- Q_clim_dt_tmp[,lapply(.SD,diff),by = .(name,metric),.SDcols = col_to_compute];rm(Q_clim_dt_tmp)
 
-## optimum of the density computation and rounding
+## optimum of the density computation 
 get_density_max <- function(x,na.rm=T){
   tmp <- try(density(x,na.rm=na.rm,n = 512*2),silent = T)
   
@@ -112,6 +132,8 @@ get_density_max <- function(x,na.rm=T){
 }
 occ_dt_clim[ , metric := "optimum" ]
 opt_clim_dt <- occ_dt_clim[ , lapply(.SD,get_density_max,na.rm=T), by = .(name,metric),.SDcols = col_to_compute]
+
+## rounding
 opt_clim_dt <- opt_clim_dt[ , mapply(round,.SD,round_digit,SIMPLIFY = F), by = .(name,metric),.SDcols = col_to_compute] ##rounding to the decimal precision of CHELSA
 
 ## getting the database together
@@ -122,10 +144,20 @@ ClimNicheHub[,print(summary(.SD)),by = metric]
 
 #### Export ####
 
-write.table(ClimNicheHub,file.path("ClimNiche_database","climate_summary.csv"),row.names = F,sep = ",")
-write.table(table_species_name_count,file.path("ClimNiche_database","sampling_summary.csv"),row.names = F,sep = ",")
+write.table(ClimNicheHub,file.path("ClimNiche_database","ClimNiche_climate_summary.csv"),row.names = F,sep = ",")
 
-write.table(ClimNicheHub,file.path("ClimNiche_database","boreal_tundra_climate_summary.csv"),row.names = F,sep = ",")
+write.table(ClimNicheHub,file.path("ClimNiche_database","ClimNiche_boreal_tundra_climate_summary.csv"),row.names = F,sep = ",")
+
+
+#### Export of the whole chelsa sampling 
+grid_clim <- occ_dt_clim[!duplicated(cell_id),-c("name","prov","date","key","metric")]
+
+
+saveRDS(grid_clim,file.path("Complete_sampling","all_CHELSA_cells.RData"))
+saveRDS(occ_dt_clim[,c("name","cell_id")],file.path("Complete_sampling","species_cells.RData"))
+
+saveRDS(grid_clim,file.path("Complete_sampling","boreal_tundra_CHELSA_cells.RData"))
+saveRDS(occ_dt_clim[,c("name","cell_id")],file.path("Complete_sampling","boreal_tundra_species_cells.RData"))
 
 #### PCA-based approach ####
 
@@ -134,13 +166,6 @@ set.seed(0)
 sample_of_grid <- sample(grid_clim$cell_id,20000)
 
 plot(grid_clim[cell_id%in% sample_of_grid,.(bio1,bio4)])
-
-#### Export of the whole chelsa sampling 
-saveRDS(grid_clim,file.path("Complete_sampling","all_CHELSA_cells.RData"))
-saveRDS(occ_dt_clim[,c("name","cell_id")],file.path("Complete_sampling","species_cells.RData"))
-
-saveRDS(grid_clim,file.path("Complete_sampling","boreal_tundra_CHELSA_cells.RData"))
-saveRDS(occ_dt_clim[,c("name","cell_id")],file.path("Complete_sampling","boreal_tundra_species_cells.RData"))
 
 library(ade4)
 
@@ -177,8 +202,9 @@ ggplot(pca_species,aes(x = Axis3, y = Axis4, color = bio10,size = bio4))+
   scale_color_viridis_c()
 
 plot(test_salix$lisup)
+write.table(pca_ClimNicheHub,file.path("ClimNiche_database","ClimNiche_all_pca_summary.csv"),row.names = F,sep = ",")
 
-write.table(pca_ClimNicheHub,file.path("ClimNiche_database","boreal_tundra_pca_summary.csv"),row.names = F,sep = ",")
+write.table(pca_ClimNicheHub,file.path("ClimNiche_database","ClimNiche_boreal_tundra_pca_summary.csv"),row.names = F,sep = ",")
 
 #### Plotting ####
 country_shape <- ne_download(50)

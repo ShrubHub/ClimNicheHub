@@ -1,10 +1,10 @@
 # ClimNicheHub
 
-*This repository stores the climatic niche estimation of 893 vascular plant species recorded in the International Tundra EXperiment database ([ITEX](https://www.gvsu.edu/itex/)).*
+*This repository stores the climatic niche estimation of **1055** plant and lichen species recorded in the International Tundra EXperiment database ([ITEX](https://www.gvsu.edu/itex/)).*
 
 ## Description
 
-The niches were estimated by first pulling the first **10,000** occurrences from the [GBIF](https://www.gbif.org/). After a filtering of the occurrences based on coordinates , we extracted the bioclimatologies from the latest version of the [CHELSA V2.1](https://chelsa-climate.org/) global climatology database. For each species, the mean, median, the quantile 5% and 95%, the interquantile range and the mode were computed from the distribution of each bioclimatic CHELSA variable where the species occurred. Species with less than 100 filtered occurrences were discarded from the niche computation.
+The niches were estimated by first pulling the first **10,000** occurrences from the [GBIF](https://www.gbif.org/). After a filtering of the occurrences based on coordinates , we extracted the bioclimatologies from the latest version of the [CHELSA V2.1](https://chelsa-climate.org/) global climatology database. For each species, the mean, median, the quantile 5% and 95%, the interquantile range and the mode were computed from the distribution of each bioclimatic CHELSA variable where the species occurred. Species with less than 100 filtered occurrences were discarded from the niche computation. Estimations from the boreal and tundra ranges of **985** species are also available.
 
 To analyse species climatic niche in a multivariate framework, a PCA was also conducted to reduce the dimension of every CHELSA cells where at least one species occurred. The results of the PCA as well as the centroïds of each species projected in this PCA space are also available.
 
@@ -12,9 +12,11 @@ To analyse species climatic niche in a multivariate framework, a PCA was also co
 
 ## Data list
 
-In `ClimNiche_database`, `ClimNiche_climate_summary.csv` presentes the summary statistics for each climate variable of each species, `ClimNiche_pca_summary.csv` contains the centroïds of each species occurrence projected in the PCA and `ClimNiche_sampling_summary.csv` doubles as a list of taxonomic synonym with the ITEX database and a count of how many occurrences were used in the niche computation.
+In `ClimNiche_database`, `ClimNiche_climate_summary.csv` presents the summary statistics for each climate variable of each species, `ClimNiche_pca_summary.csv` contains the centroïds of each species occurrence projected in the PCA and `sampling_summary.csv` doubles as a list of taxonomic synonym with the ITEX database and a count of how many occurrences were used in the niche computation.
 
 The `Complete_sampling` folder contains all of the CHELSA cells (`all_CHELSA_cells.Rdata`) where at least one species occurrences, along with a unique cell_id identifier. `species_cells.RData` contains every cell_id where every species occurred, allowing for creating the full sampling back with a merge function.
+
+In `ClimNiche_database` and `Complete_sampling`, "boreal_tundra" files are also available, corresponding to the same procedure but constrained to the tundra-boreal bioclimatic region to accommodate for ubiquitous species having cold-adapted sub-populations. In these files, **985** species are available.
 
 The folder `raw_occ` contains the the 10,000 (or less) raw occurrence downloaded from GBIF before 15-feb-2015, in .RData format. The folder `filtered_occ` folder contains processed raw occurrences filtered by the occTest packages, removing duplicates within a CHELSA pixel, as well as test for various coordinates errors. chelsa_data_V2.1 contain the metadata behind the CHELSA bioclimatic name, and should contain the CHELSA rasters. They are not included but can be download with the script `download_CHELSA_V2.1.R` .
 
@@ -24,9 +26,9 @@ The folder `raw_occ` contains the the 10,000 (or less) raw occurrence downloaded
 
 These script can be used to extend the analysis to non-vascular taxa.
 
-### Acknowledgment 
+### Acknowledgment
 
-We are grateful to the creators and the maintainere of the packages `spocc`, `occTest`, `terra`, `sf` and `data.table` that greatly facilitated our analysis, as well to the many data contributors to the GBIF and its sub-repositories (such as INaturalist). JB and IMS were funded by the ERC synergy grand n°101071417.
+We are grateful to the creators and the maintainer of the packages `spocc`, `occTest`, `terra`, `sf` and `data.table` that greatly facilitated our analysis, as well to the many data contributors to the GBIF and its sub-repositories (such as INaturalist). JB and IMS were funded by the ERC synergy grand n°101071417.
 
 ### Authors
 
