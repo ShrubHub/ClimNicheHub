@@ -68,7 +68,7 @@ all_clim <- extract(chelsa_full,vect(occ_dt_sf))
 all_clim <- data.table(all_clim)
 occ_dt_clim <- cbind(occ_dt,all_clim[,-"ID"])
 
-rm(occ_dt);rm(occ_dt_sf);gc()
+rm(occ_dt);rm(occ_dt_sf);rm(all_clim);gc()
 
 #### summary statistics computation ####
 
