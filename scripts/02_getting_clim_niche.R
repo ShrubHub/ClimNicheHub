@@ -209,8 +209,6 @@ write.table(pca_ClimNicheHub,file.path("ClimNiche_database","ClimNiche_boreal_tu
 #### Plotting ####
 country_shape <- ne_download(50)
 
-occ_dt_clim <- occ_dt_clim[kg5<=4,]
-occ_dt_clim <- occ_dt_clim_full
 
 plot_one_sp <- function(name_sp, what = "bio10",labs = NULL,occ = occ_dt_clim){
   set.seed(0)
@@ -275,11 +273,13 @@ save_a_plot("Betula pubescens","bio10","TWQ (°C)")
 save_a_plot("Betula nana","bio10","TWQ (°C)")
 save_a_plot("Androsace obtusifolia","bio10","TWQ (°C)")
 save_a_plot("Androsace chamaejasme","bio10","TWQ (°C)")
+save_a_plot("Salix phlebophylla","bio10","TWQ (°C)")
 
+plot_one_sp("Salix phlebophylla","bio10","TWQ (°C)",occ_dt_clim)
 plot_one_sp("Achillea millefolium","bio10","TWQ (°C)",occ_dt_clim_full)
 
 plot_one_sp("Salix arctica","bio10","TWQ (°C)")
-plot_one_sp("Betula pubescens","bio10","TWQ (°C)",occ_dt_clim)
+plot_one_sp("Betula nana","bio10","TWQ (°C)",occ_dt_clim)
 plot_one_sp("Betula pubescens","bio10","TWQ (°C)",occ_dt_clim[kg5<=7])
 plot_one_sp("Betula pubescens","bio10","TWQ (°C)",occ_dt_clim[kg5<=4])
 
@@ -289,5 +289,47 @@ plot_one_sp("Andromeda polifolia","bio10","TWQ (°C)",occ_dt_clim[kg5<=4])
 Salix petrophila
 
 
+plot_one_sp("Betula glandulosa","bio10","TWQ (°C)",occ_dt_clim[kg5<=7])
+plot_one_sp("Petasites frigidus","bio10","TWQ (°C)",occ_dt_clim[kg5<=7])
+plot_one_sp("Dupontia fisheri","bio10","TWQ (°C)",occ_dt_clim[kg5<=7])
+plot_one_sp("Lupinus arcticus","bio10","TWQ (°C)",occ_dt_clim[kg5<=7])
+plot_one_sp("Salix reticulata","bio10","TWQ (°C)",occ_dt_clim[kg5<=7])
+
+
+
 plot_one_sp("Silene acaulis","bio18","TWQ (°C)",occ_dt_clim)
 
+world2 <- st_crop(country_shape, c(xmin = -180, ymin= -89.99893, xmax= 180, ymax = 83.))
+extent = st_set_crs(st_as_sf(as(st_bbox (c(xmin = -180, ymin= -0, xmax= 180, ymax = 83.59961)), "SpatialPolygons")), 4326)
+sp::SpatialPolygons(c(xmin = -180, ymin= -0, xmax= 180, ymax = 83.59961))
+
+e <- ext( c(-180, 180,-90,  83.59961) )
+p <- as.polygons(x = e,crs = crs(country_shape))
+p <- st_as_sf(p)
+p <- st_transform(p,country_shape)
+st_crs(p) <- st_crs(country_shape)
+world2 <- st_intersection(country_shape,p)
+st_intersection(census, extent_sf)
+
+world2 <- sf::st_transform(
+  country_shape,
+  "+proj=laea +y_0=90 + x_0=0 + lon_0=155 +lat_0=90 + units = m +ellps=WGS84 +no_defs"
+)
+
+world2 <- st_crop(world2, c(xmin = 0, ymin= 60, xmax= 0, ymax = 90))
+
+ggplot(world2)+geom_sf()#+coord_sf(xlim = c(20,1800000),ylim = c(6000,900000))
+ggplot(world2)+geom_sf()+ coord_sf(crs = st_crs(3995))#+coord_sf(xlim = c(20,1800000),ylim = c(6000,900000))
+ggplot(world2)+geom_sf()+coord_sf(ylim = c(0,10000000)) #+coord_sf(xlim = c(20,1800000),ylim = c(6000,900000))
+
+
+
+#### bayesian approach ####
+library(brms)
+
+occ_dt_clim[name == "Salix phlebophylla" ,]
+
+one_sp_opt_3 <- brm(bio10 ~ 1,data = occ_dt_clim[name == "Vaccinium vitis-idaea" ,],backend = "cmdstanr")
+
+plot(one_sp_opt_3)
+pp_check(one_sp_opt_3)
