@@ -18,8 +18,9 @@ library(doFuture)
 
 # table_species_name <- fread(file.path("species_list","Taxonomy_ITEX_gbif_ClimNicheHub_2025.csv"))
 table_species_name <- fread(file.path("species_list","GBIF_ITEX_query_list_05_2025.csv"))
+table_species_name <- fread(file.path("species_list","GBIF_ITEX_query_list_03_2026.csv"))
 table_species_name <- table_species_name[order(accepted_name),]
-
+table_species_name <- table_species_name[!is.na(accepted_name),]
 ## function to get raw_occ file path
 get_raw_file_path <- function(sp_name){
   sp_name <- str_remove_all(sp_name,"[.]")
@@ -31,11 +32,12 @@ return(name_file)
 
 
 table_species_name[,raw_occ_path := get_raw_file_path(accepted_name)]
+table_species_name[,already_downloaded := file.exists(raw_occ_path)]
 table_species_name[!duplicated(accepted_name),]
-
+table_species_name[already_downloaded == F,]
 t1 <- Sys.time()
 
-foreach(name_to_dl = table_species_name[,unique(accepted_name)] ) %do%{ # raw_occ_path %in% toget
+foreach(name_to_dl = table_species_name[already_downloaded == F,unique(accepted_name)] ) %do%{ # raw_occ_path %in% toget
   
           names_to_query <- table_species_name[accepted_name == name_to_dl,unique(species)]
           print(names_to_query)

@@ -16,9 +16,10 @@ library(ggpubr)
 #### meta data and climate data ####
 
 table_species_name <- fread(file.path("species_list","GBIF_ITEX_query_list_05_2025.csv"))
+table_species_name <- fread(file.path("species_list","GBIF_ITEX_query_list_03_2026.csv"))
 
 table_species_name[,raw_occ_path := get_raw_file_path(accepted_name)]
-table_species_name[,filtered_occ_path := get_raw_file_path(accepted_name)]
+table_species_name[,filtered_occ_path := get_filtered_file_path(accepted_name)]
 
 ## clim data
 all_chelsa_path <- list.files("chelsa_data_V2.1",full.names = T,pattern = ".tif")
@@ -37,11 +38,12 @@ names(chelsa_full) <- str_remove(names(chelsa_full),"CHELSA_")
 
 result_occ_path <-  list.files("filtered_occ",full.names = T,pattern = ".RData")
 
-list_of_occ <- lapply(result_occ_path,readRDS)
+#result_occ_path <-  table_species_name$filtered_occ_path
+
+list_of_occ <- lapply(result_occ_path,readRDS) # result_occ_path[!grepl("Lophozia",result_occ_path)]
 
 occ_dt <- rbindlist(list_of_occ,fill = T);rm(list_of_occ);gc()
 
-occ_dt <- occ_dt[,c(1:6,147)]
 
 occ_dt[,accepted_name := ifelse(is.na(name_itex),name,name_itex)]
 
@@ -55,6 +57,7 @@ final_count <- occ_dt[,.N,by= name]
 enough_occ <- final_count[N>= 100,]
 ## selecting species with at least 100 occ
 occ_dt <- occ_dt[name%in%enough_occ$name,]
+occ_dt <- occ_dt[,1:6]
 ## spatial object
 occ_dt_sf <- st_as_sf(occ_dt,coords=c("longitude","latitude"),crs=st_crs(4326))
 
@@ -63,9 +66,23 @@ bugged_sp
 ##no occurrences found for "Lophozia serpens" 
 
 #### extraction of climate data ####
+gc()
 
-all_clim <- extract(chelsa_full,vect(occ_dt_sf))
-all_clim <- data.table(all_clim)
+occ_dt_sf$split <-ceiling( 1:nrow(occ_dt_sf)/ ( nrow(occ_dt_sf) / 2))
+occ_dt_sf <- vect(occ_dt_sf)
+split_occ_dt <- split(occ_dt_sf,occ_dt_sf$split)
+gc()
+#all_clim <- extract(chelsa_full,vect(occ_dt_sf))
+
+all_clim <- lapply(split_occ_dt, function (x) extract(chelsa_full,x ))
+
+gc()
+
+all_clim <- rbindlist(all_clim)
+
+gc()
+
+#all_clim <- data.table(all_clim)
 occ_dt_clim <- cbind(occ_dt,all_clim[,-"ID"])
 
 rm(occ_dt);rm(occ_dt_sf);rm(all_clim);gc()
@@ -74,10 +91,8 @@ rm(occ_dt);rm(occ_dt_sf);rm(all_clim);gc()
 
 final_count_all <- occ_dt_clim[,.N,by= name]
 final_count_boreal_tundra <- occ_dt_clim[kg5<=7,.N,by= name]
-final_count_tundra <- occ_dt_clim[kg5<=4,.(`N_tund` =.N),by= name]
 
 final_count_all <- merge(final_count_all,final_count_boreal_tundra,all.x=T,by="name",suffixes = c("_all","_bor_tund"))
-final_count_all <- merge(final_count_all,final_count_tundra,all.x=T,by="name")
 # final_count_all[,N_bor_tund := ifelse(is.na(N_bor_tund),0,N_bor_tund)]
 # final_count_all[,N_tund := ifelse(is.na(N_tund),0,N_tund)]
 
@@ -94,13 +109,15 @@ write.table(sampling_summary,file.path("ClimNiche_database","sampling_summary.cs
 col_to_compute <- c(names(chelsa_full)[-33],"longitude","latitude")
 col_to_compute <- col_to_compute[c(1,12:19,2:11,20:30,32:34)]  ### ordering, not interested in kg5
 
-## run this for the complete computation
+## run this for the complete computation --1
 occ_dt_clim_full <- occ_dt_clim
 occ_dt_clim <- occ_dt_clim_full
 
-## run this for the bor_tund computation
+## run this for the bor_tund computation --2
 occ_dt_clim <- occ_dt_clim[kg5<=7,]
 occ_dt_clim <- occ_dt_clim[name %in% final_count_all[N_bor_tund>=100,name],]
+
+
 ## precision of CHELSA
 round_digit <- c(2,1,3,1,2,2,1,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,0,0,1,2,0,3,3)
 
