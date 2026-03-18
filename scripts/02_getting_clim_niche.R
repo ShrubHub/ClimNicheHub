@@ -166,6 +166,11 @@ write.table(ClimNicheHub,file.path("ClimNiche_database","ClimNiche_climate_summa
 write.table(ClimNicheHub,file.path("ClimNiche_database","ClimNiche_boreal_tundra_climate_summary.csv"),row.names = F,sep = ",")
 
 
+ClimNicheHub <- fread(file.path("ClimNiche_database","ClimNiche_climate_summary.csv"))
+length(unique(ClimNicheHub$name))
+ClimNicheHub_bor_tund <- fread(file.path("ClimNiche_database","ClimNiche_boreal_tundra_climate_summary.csv"))
+length(unique(ClimNicheHub_bor_tund$name))
+
 #### Export of the whole chelsa sampling 
 grid_clim <- occ_dt_clim[!duplicated(cell_id),-c("name","prov","date","key","metric")]
 
@@ -222,6 +227,9 @@ plot(test_salix$lisup)
 write.table(pca_ClimNicheHub,file.path("ClimNiche_database","ClimNiche_all_pca_summary.csv"),row.names = F,sep = ",")
 
 write.table(pca_ClimNicheHub,file.path("ClimNiche_database","ClimNiche_boreal_tundra_pca_summary.csv"),row.names = F,sep = ",")
+
+
+
 
 #### Plotting ####
 country_shape <- ne_download(50)

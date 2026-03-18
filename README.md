@@ -1,10 +1,10 @@
 # ClimNicheHub
 
-*This repository stores the climatic niche estimation of **1055** plant and lichen species recorded in the International Tundra EXperiment database ([ITEX](https://www.gvsu.edu/itex/)).*
+*This repository stores the climatic niche estimation of **1422** plant and lichen species recorded in the International Tundra EXperiment database ([ITEX](https://www.gvsu.edu/itex/)).*
 
 ## Description
 
-The niches were estimated by first pulling the first **10,000** occurrences from the [GBIF](https://www.gbif.org/). After a filtering of the occurrences based on coordinates , we extracted the bioclimatologies from the latest version of the [CHELSA V2.1](https://chelsa-climate.org/) global climatology database. For each species, the mean, median, the quantile 5% and 95%, the interquantile range and the mode were computed from the distribution of each bioclimatic CHELSA variable where the species occurred. Species with less than 100 filtered occurrences were discarded from the niche computation. Estimations from the boreal and tundra ranges of **985** species are also available.
+The niches were estimated by first pulling the first **10,000** occurrences from the [GBIF](https://www.gbif.org/). After a filtering of the occurrences based on coordinates , we extracted the bioclimatologies from the latest version of the [CHELSA V2.1](https://chelsa-climate.org/) global climatology database. For each species, the mean, median, the quantile 5% and 95%, the interquantile range and the mode were computed from the distribution of each bioclimatic CHELSA variable where the species occurred. Species with less than 100 filtered occurrences were discarded from the niche computation. Estimations from the boreal and tundra ranges of **1256** species are also available.
 
 To analyse species climatic niche in a multivariate framework, a PCA was also conducted to reduce the dimension of every CHELSA cells where at least one species occurred. The results of the PCA as well as the centroïds of each species projected in this PCA space are also available.
 
