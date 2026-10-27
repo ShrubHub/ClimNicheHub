@@ -1,0 +1,31 @@
+taxon,query,gbif_name,gbif_status,match_type,reason,gbif_species,hub_name,n_occ_bor_tund
+Alopecurus ovatus,Alopecurus ovatus,Alopecurus ovatus,ACCEPTED,EXACT,not in ClimNicheHub,Alopecurus ovatus,,
+Antennaria boecheriana,Antennaria boecheriana,Antennaria boecheriana,ACCEPTED,EXACT,not in ClimNicheHub,Antennaria boecheriana,,
+Antennaria compacta,Antennaria compacta,Antennaria compacta,SYNONYM,EXACT,proposal: own niche (GBIF lumps it into Antennaria alpina),Antennaria alpina,Antennaria alpina,5625
+Antennaria glabrata,Antennaria glabrata,Antennaria glabrata,SYNONYM,EXACT,proposal: own niche (GBIF lumps it into Antennaria alpina),Antennaria alpina,Antennaria alpina,5625
+Anthriscus sylvestris,Anthriscus sylvestris,Anthriscus sylvestris,ACCEPTED,EXACT,not in ClimNicheHub,Anthriscus sylvestris,,
+Betula pubescens × nana,Betula pubescens,Betula pubescens,ACCEPTED,EXACT,proposal: own niche (GBIF lumps it into Betula pubescens),Betula pubescens,Betula pubescens,1414
+Carex macloviana,Carex macloviana,Carex macloviana,ACCEPTED,EXACT,not in ClimNicheHub,Carex macloviana,,
+Carex stylosa,Carex stylosa,Carex stylosa,ACCEPTED,EXACT,not in ClimNicheHub,Carex stylosa,,
+Cerastium nigrescens,Cerastium nigrescens,Cerastium nigrescens,ACCEPTED,EXACT,not in ClimNicheHub,Cerastium nigrescens,,
+Deschampsia alpina,Deschampsia alpina,Deschampsia alpina,SYNONYM,EXACT,proposal: own niche (GBIF lumps it into Deschampsia cespitosa),Deschampsia cespitosa,Deschampsia cespitosa,1107
+Draba arctogena,Draba arctogena,Draba arctogena,ACCEPTED,EXACT,not in ClimNicheHub,Draba arctogena,,
+Draba oxycarpa,Draba oxycarpa,Draba oxycarpa,ACCEPTED,EXACT,not in ClimNicheHub,Draba oxycarpa,,
+Elymus alaskanus,Elymus alaskanus,Elymus alaskanus,ACCEPTED,EXACT,not in ClimNicheHub,Elymus alaskanus,,
+Equisetum arvense,Equisetum arvense,Equisetum arvense,ACCEPTED,EXACT,"in ClimNicheHub, not in the boreal-tundra set",Equisetum arvense,Equisetum arvense,74
+Festuca viviparoidea,Festuca viviparoidea,Festuca viviparoidea,ACCEPTED,EXACT,not in ClimNicheHub,Festuca viviparoidea,,
+Hieracium subalpinum,Hieracium subalpinum,Hieracium subalpinum,SYNONYM,EXACT,not in ClimNicheHub,Hieracium umbrosum,,
+Juncus alpinus,Juncus alpinus,Juncus alpinus,ACCEPTED,EXACT,not in ClimNicheHub,Juncus alpinus,,
+Luzula groenlandica,Luzula groenlandica,Luzula groenlandica,ACCEPTED,EXACT,not in ClimNicheHub,Luzula groenlandica,,
+Melica nutans,Melica nutans,Melica nutans,ACCEPTED,EXACT,not in ClimNicheHub,Melica nutans,,
+Potentilla vahliana,Potentilla vahliana,Potentilla vahliana,ACCEPTED,EXACT,"in ClimNicheHub, not in the boreal-tundra set",Potentilla vahliana,Potentilla vahliana,99
+Ranunculus acris,Ranunculus acris,Ranunculus acris,ACCEPTED,EXACT,"in ClimNicheHub, not in the boreal-tundra set ",Ranunculus acris,Ranunculus acris,38
+Ranunculus glacialis,Ranunculus glacialis,Ranunculus glacialis,ACCEPTED,EXACT,not in ClimNicheHub,Ranunculus glacialis,,
+Rubus saxatilis,Rubus saxatilis,Rubus saxatilis,ACCEPTED,EXACT,not in ClimNicheHub,Rubus saxatilis,,
+Rumex acetosa,Rumex acetosa,Rumex acetosa,ACCEPTED,EXACT,"in ClimNicheHub, not in the boreal-tundra set ",Rumex acetosa,Rumex acetosa,74
+Salix starkeana,Salix starkeana,Salix starkeana,ACCEPTED,EXACT,not in ClimNicheHub,Salix starkeana,,
+Saxifraga platysepala,Saxifraga platysepala,Saxifraga platysepala,ACCEPTED,EXACT,not in ClimNicheHub,Saxifraga platysepala,,
+Saxifraga rivularis,Saxifraga rivularis,Saxifraga rivularis,ACCEPTED,EXACT,not in ClimNicheHub,Saxifraga rivularis,,
+Saxifraga svalbardensis,Saxifraga svalbardensis,Saxifraga svalbardensis,ACCEPTED,EXACT,not in ClimNicheHub,Saxifraga svalbardensis,,
+Silene dioica,Silene dioica,Silene dioica,ACCEPTED,EXACT,"in ClimNicheHub, not in the boreal-tundra set",Silene dioica,Silene dioica,21
+Viola epipsila,Viola epipsila,Viola epipsila,ACCEPTED,EXACT,not in ClimNicheHub,Viola epipsila,,

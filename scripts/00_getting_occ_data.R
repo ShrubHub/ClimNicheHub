@@ -21,6 +21,16 @@ table_species_name <- fread(file.path("species_list","GBIF_ITEX_query_list_05_20
 table_species_name <- fread(file.path("species_list","GBIF_ITEX_query_list_03_2026.csv"))
 table_species_name <- table_species_name[order(accepted_name),]
 table_species_name <- table_species_name[!is.na(accepted_name),]
+
+additional_species_name <- fread(file.path("species_list","ClimNicheHub_unmatched.csv"))
+
+additional_species_name <- additional_species_name[!duplicated(gbif_species) ,]
+additional_species_name[!gbif_species %in% table_species_name$accepted_name ,]
+additional_species_name[, gbif_species := ifelse(gbif_species == "Betula pubescens","Betula nana × pubescens",gbif_species)]
+additional_species_name <- additional_species_name[!gbif_species %in% table_species_name$accepted_name ,]
+additional_species_name[,accepted_name := gbif_species]
+
+table_species_name <- rbind(table_species_name,additional_species_name[,"accepted_name"],fill=T)
 ## function to get raw_occ file path
 get_raw_file_path <- function(sp_name){
   sp_name <- str_remove_all(sp_name,"[.]")
@@ -41,7 +51,7 @@ foreach(name_to_dl = table_species_name[already_downloaded == F,unique(accepted_
   
           names_to_query <- table_species_name[accepted_name == name_to_dl,unique(species)]
           print(names_to_query)
-          occ_dl <- occ(names_to_query,limit=10000,has_coords = T,date = c('1900-01-01', '2025-02-01'))
+          occ_dl <- occ(names_to_query,limit=10000,has_coords = T,date = c('1900-01-01', '2026-09-10'))
           occ_dl <- data.table(occ2df(occ_dl))
           occ_dl[,name_gbif := name_to_dl]
           occ_dl[,name_itex := name_to_dl]
