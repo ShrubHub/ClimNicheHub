@@ -59,6 +59,7 @@
 "Angelica saxatilis",198,181,1,1
 "Angelica sylvestris",6408,331,1,1
 "Antennaria alpina",6033,5625,1,1
+"Antennaria boecheriana",1,NA,0,0
 "Antennaria canescens",277,275,1,1
 "Antennaria dioica",6915,2685,1,1
 "Antennaria friesiana",586,570,1,1
@@ -77,6 +78,7 @@
 "Anthoxanthum nipponicum",5131,4397,1,1
 "Anthoxanthum nitens",4753,1390,1,1
 "Anthoxanthum odoratum",5970,201,1,1
+"Anthriscus sylvestris",4099,8,1,0
 "Anthyllis vulneraria",6569,672,1,1
 "Apopellia megaspora",38,NA,0,0
 "Aquilegia flabellata",335,157,1,1
@@ -146,6 +148,7 @@
 "Bartsia alpina",6105,5048,1,1
 "Betula glandulosa",3838,3227,1,1
 "Betula nana",7299,5347,1,1
+"Betula nana × pubescens",1849,1363,1,1
 "Betula pubescens",7109,1414,1,1
 "Bistorta amplexicaulis",1890,31,1,0
 "Bistorta bistortoides",4063,2416,1,1
@@ -259,6 +262,7 @@
 "Carex leporina",6560,383,1,1
 "Carex limosa",6686,2142,1,1
 "Carex lyngbyei",1818,1061,1,1
+"Carex macloviana",2047,1835,1,1
 "Carex magellanica",7573,3953,1,1
 "Carex marina",443,420,1,1
 "Carex maritima",3831,2540,1,1
@@ -299,6 +303,7 @@
 "Carex simpliciuscula",2742,2461,1,1
 "Carex siroumensis",10,NA,0,0
 "Carex stenantha",193,128,1,1
+"Carex stylosa",418,341,1,1
 "Carex subspathacea",948,751,1,1
 "Carex supina",1388,398,1,1
 "Carex umbrosa",5037,475,1,1
@@ -324,6 +329,7 @@
 "Cerastium fontanum",5625,225,1,1
 "Cerastium glomeratum",4891,5,1,0
 "Cerastium holosteoides",6601,420,1,1
+"Cerastium nigrescens",1494,1219,1,1
 "Cerastium purpurascens",83,NA,0,0
 "Cerastium regelii",1140,1111,1,1
 "Ceratodon purpureus",6678,222,1,1
@@ -476,6 +482,7 @@
 "Draba aizoides",3246,1687,1,1
 "Draba alpina",1881,1861,1,1
 "Draba arctica",455,455,1,1
+"Draba arctogena",144,123,1,1
 "Draba aurea",1017,838,1,1
 "Draba breweri",181,174,1,1
 "Draba cana",955,785,1,1
@@ -491,6 +498,7 @@
 "Draba norvegica",4524,3843,1,1
 "Draba oblongata",256,256,1,1
 "Draba ochroleuca",149,146,1,1
+"Draba oxycarpa",249,248,1,1
 "Draba pauciflora",377,374,1,1
 "Draba streptocarpa",192,138,1,1
 "Draba subcapitata",857,857,1,1
@@ -507,6 +515,7 @@
 "Dupontia fulva",1050,970,1,1
 "Eleocharis uniglumis",4646,169,1,1
 "Elsholtzia densa",383,110,1,1
+"Elymus alaskanus",516,474,1,1
 "Elymus arenarius",32,NA,0,0
 "Elymus nutans",388,206,1,1
 "Elymus violaceus",6523,2302,1,1
@@ -591,6 +600,7 @@
 "Festuca rubra",6144,285,1,1
 "Festuca varia",456,234,1,1
 "Festuca vivipara",6799,2303,1,1
+"Festuca viviparoidea",452,446,1,1
 "Filipendula ulmaria",6312,98,1,0
 "Fissidens osmundioides",567,168,1,1
 "Flexitrichum flexicaule",4727,1550,1,1
@@ -693,6 +703,7 @@
 "Hieracium lachenalii",6415,259,1,1
 "Hieracium triste",1598,1398,1,1
 "Hieracium umbellatum",6698,330,1,1
+"Hieracium umbrosum",742,238,1,1
 "Hieracium villosum",2810,1528,1,1
 "Hippocrepis comosa",4217,514,1,1
 "Hippophae rhamnoides",3792,131,1,1
@@ -724,6 +735,7 @@
 "Japewia tornoensis",716,442,1,1
 "Juncus albescens",812,777,1,1
 "Juncus alpinoarticulatus",6908,2268,1,1
+"Juncus alpinus",297,96,1,0
 "Juncus arcticus",5031,3976,1,1
 "Juncus articulatus",5938,141,1,1
 "Juncus beringensis",106,87,1,0
@@ -808,6 +820,7 @@
 "Luzula arcuata",4708,3917,1,1
 "Luzula campestris",5294,99,1,0
 "Luzula confusa",4641,4388,1,1
+"Luzula groenlandica",151,147,1,1
 "Luzula luzuloides",5918,556,1,1
 "Luzula modesta",799,197,1,1
 "Luzula multiflora",6850,1013,1,1
@@ -835,6 +848,7 @@
 "Melampyrum pratense",6890,641,1,1
 "Melampyrum sylvaticum",7195,1819,1,1
 "Melanelia stygia",2886,1353,1,1
+"Melica nutans",6629,732,1,1
 "Melicytus dentatus",5678,160,1,1
 "Melilotus dentatus",546,7,1,0
 "Menyanthes trifoliata",6292,1062,1,1
@@ -1148,6 +1162,7 @@
 "Ranunculus auricomus",5826,227,1,1
 "Ranunculus brotherusii",359,143,1,1
 "Ranunculus eschscholtzii",1794,1637,1,1
+"Ranunculus glacialis",4361,4049,1,1
 "Ranunculus hyperboreus",3160,2907,1,1
 "Ranunculus lanuginosus",5700,211,1,1
 "Ranunculus montanus",3159,1263,1,1
@@ -1196,6 +1211,7 @@
 "Rubus arcticus",7565,3995,1,1
 "Rubus chamaemorus",7073,3606,1,1
 "Rubus idaeus",7322,397,1,1
+"Rubus saxatilis",7189,1128,1,1
 "Rumex acetosa",5125,74,1,0
 "Rumex acetosella",5808,241,1,1
 "Rumex alpinus",5142,2616,1,1
@@ -1249,6 +1265,7 @@
 "Salix richardsonii",783,754,1,1
 "Salix rotundifolia",509,478,1,1
 "Salix silesiaca",1509,320,1,1
+"Salix starkeana",5640,1853,1,1
 "Salix uva-ursi",810,451,1,1
 "Salix viminalis",6438,100,1,1
 "Sanguisorba canadensis",1574,187,1,1
@@ -1280,8 +1297,11 @@
 "Saxifraga hypnoides",3746,1398,1,1
 "Saxifraga oppositifolia",4334,3661,1,1
 "Saxifraga paniculata",4873,2504,1,1
+"Saxifraga platysepala",420,420,1,1
 "Saxifraga punctata",55,NA,0,0
+"Saxifraga rivularis",5535,4898,1,1
 "Saxifraga rosacea",720,126,1,1
+"Saxifraga svalbardensis",157,157,1,1
 "Saxifraga tricuspidata",2586,2291,1,1
 "Scabiosa columbaria",4453,224,1,1
 "Scaevola hookeri",502,101,1,1
@@ -1510,6 +1530,7 @@
 "Viola biflora",6342,4078,1,1
 "Viola calcarata",3827,2593,1,1
 "Viola canina",5520,414,1,1
+"Viola epipsila",8404,4146,1,1
 "Viola lutea",3432,450,1,1
 "Viola multifida",508,205,1,1
 "Viola palustris",6716,1191,1,1

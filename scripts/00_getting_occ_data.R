@@ -29,8 +29,12 @@ additional_species_name[!gbif_species %in% table_species_name$accepted_name ,]
 additional_species_name[, gbif_species := ifelse(gbif_species == "Betula pubescens","Betula nana × pubescens",gbif_species)]
 additional_species_name <- additional_species_name[!gbif_species %in% table_species_name$accepted_name ,]
 additional_species_name[,accepted_name := gbif_species]
+additional_species_name[,species := gbif_species]
 
-table_species_name <- rbind(table_species_name,additional_species_name[,"accepted_name"],fill=T)
+table_species_name <- rbind(table_species_name,additional_species_name[,c("accepted_name","species")],fill=T)
+
+write.csv(table_species_name,file.path("species_list","GBIF_ITEX_query_list_03_2026_additional_sp.csv"))
+
 ## function to get raw_occ file path
 get_raw_file_path <- function(sp_name){
   sp_name <- str_remove_all(sp_name,"[.]")

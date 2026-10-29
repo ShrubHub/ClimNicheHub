@@ -16,7 +16,7 @@ library(ggpubr)
 #### meta data and climate data ####
 
 table_species_name <- fread(file.path("species_list","GBIF_ITEX_query_list_05_2025.csv"))
-table_species_name <- fread(file.path("species_list","GBIF_ITEX_query_list_03_2026.csv"))
+table_species_name <- fread(file.path("species_list","GBIF_ITEX_query_list_03_2026_additional_sp.csv"))
 
 table_species_name[,raw_occ_path := get_raw_file_path(accepted_name)]
 table_species_name[,filtered_occ_path := get_filtered_file_path(accepted_name)]
@@ -43,10 +43,12 @@ result_occ_path <-  list.files("filtered_occ",full.names = T,pattern = ".RData")
 list_of_occ <- lapply(result_occ_path,readRDS) # result_occ_path[!grepl("Lophozia",result_occ_path)]
 
 occ_dt <- rbindlist(list_of_occ,fill = T);rm(list_of_occ);gc()
+head(occ_dt,200)
 
 
+occ_dt[str_detect(name,"Betula"),unique(name)]
 occ_dt[,accepted_name := ifelse(is.na(name_itex),name,name_itex)]
-
+occ_dt[name == "Betula nana × pubescens" ,]
 ## some names aren't stored in the same column because of some early version of the dowload script
 occ_dt[,name := accepted_name ]
 occ_dt[,name_itex := NULL ]

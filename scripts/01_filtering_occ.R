@@ -17,7 +17,7 @@ library(sf)
 #### meta data ####
 
 table_species_name <- fread(file.path("species_list","GBIF_ITEX_query_list_05_2025.csv"))
-table_species_name <- fread(file.path("species_list","GBIF_ITEX_query_list_03_2026.csv"))
+table_species_name <- fread(file.path("species_list","GBIF_ITEX_query_list_03_2026_additional_sp.csv"))
 table_species_name <- table_species_name[order(accepted_name),]
 table_species_name <- table_species_name[!is.na(accepted_name),]
 
